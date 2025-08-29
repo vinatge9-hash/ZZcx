@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Font: Inter (Google Font) -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Niyantran Coffee - Menu</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white text-slate-900 min-h-screen">
+  <header class="w-full bg-white border-b border-gray-200">
+    <nav class="flex items-center justify-between p-4 md:p-6 max-w-full">
+      <a href="index.html" class="text-2xl font-bold">Niyantran</a>
+      <ul class="flex items-center space-x-4 text-sm">
+        <li><a href="index.html" class="hover:underline">Home</a></li>
+        <li><a href="menu.html" class="hover:underline">Menu</a></li>
+        <li><a href="chart.html" class="hover:underline">Cart</a></li>
+        <li><a href="checkout.html" class="hover:underline">Checkout</a></li>
+        <li><a href="about.html" class="hover:underline">About</a></li>
+        <li><a href="contact.html" class="hover:underline">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="px-4 md:px-12 py-8">
+    <section>
+      <h1 class="text-3xl font-bold mb-4">Menu</h1>
+      <p class="text-slate-700 mb-6">Default items to start. Add to cart to proceed to checkout.</p>
+    </section>
+
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Menu cards (data defined in script) -->
+      <div id="menu-grid" class="col-span-1 md:col-span-3"></div>
+    </section>
+  </main>
+
+  <footer class="w-full bg-gray-800 text-white py-6 mt-6">
+    <div class="text-center text-sm">© 2025 Niyantran Coffee. All rights reserved.</div>
+  </footer>
+
+  <script>
+    // Menu items (default)
+    const menuItems = [
+      { id: 'espresso', name: 'Espresso', price: 2.5, desc: 'Rich and bold shot', image: 'https://images.pexels.com/photos/1419931/pexels-photo-1419931.jpeg?auto=compress&cs=tinysrgb&h=650&w=940' },
+      { id: 'americano', name: 'Americano', price: 3.0, desc: 'Espresso with hot water', image: 'https://images.pexels.com/photos/5760811/pexels-photo-5760811.jpeg?auto=compress&cs=tinysrgb&h=650&w=940' },
+      { id: 'cappuccino', name: 'Cappuccino', price: 3.5, desc: 'Espresso, steamed milk, foam', image: 'https://pixabay.com/get/g06dd0d6c206931263b3cd4813cdb3d182075b29db79672e52a36236aade8f0ff9edb9b1c658e12546af495146a80ccdd25801ec1a0fbbcfc03af2221bdcb9936_640.jpg' },
+      { id: 'latte', name: 'Latte', price: 4.0, desc: 'Milk-forward, creamy', image: 'https://images.pexels.com/photos/2112749/pexels-photo-2112749.jpeg?auto=compress&cs=tinysrgb&h=650&w=940' },
+      { id: 'mocha', name: 'Mocha', price: 4.5, desc: 'Chocolatey delight', image: 'https://images.unsplash.com/photo-1575234337239-4c6492d7df1c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3ODkyNDZ8MHwxfHNlYXJjaHwxfHxtb2NoYSUyMHdpdGglMjBjaG9jb2xhdGUlMjBkcml6emxlfGVufDB8MHx8fDE3NTY0NTc1NjR8MA&ixlib=rb-4.1.0&q=80&w=1080' },
+      { id: 'tea', name: 'Tea', price: 2.5, desc: 'Assorted herbal & black teas', image: 'https://images.unsplash.com/photo-1740478949627-155c907b3ca0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3ODkyNDZ8MHwxfHNlYXJjaHwyfHxhc3NvcnRtZW50JTIwb2YlMjB0ZWElMjBjdXBzfGVufDB8MHx8fDE3NTY0NTc1NjV8MA&ixlib=rb-4.1.0&q=80&w=1080' }
+    ];
+
+    function addToCart(item) {
+      const cart = JSON.parse(localStorage.getItem('niyantran_cart') || '[]');
+      const found = cart.find(c => c.id === item.id);
+      if (found) found.qty += 1; else cart.push({ id: item.id, name: item.name, price: item.price, qty: 1, image: item.image });
+      localStorage.setItem('niyantran_cart', JSON.stringify(cart));
+      // update badge
+      const event = new Event('storage'); document.dispatchEvent(event);
+      renderCartCount();
+    }
+
+    function renderMenu() {
+      const grid = document.getElementById('menu-grid');
+      grid.innerHTML = '';
+      menuItems.forEach(it => {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-lg shadow-md p-4';
+        card.innerHTML = `
+          <div class="h-40 overflow-hidden rounded-md mb-3">
+            <img src="${it.image}" alt="${it.name}" class="w-full h-full object-cover" />
+          </div>
+          <h3 class="text-lg font-semibold mb-1">${it.name}</h3>
+          <p class="text-sm text-slate-600 mb-2">${it.desc}</p>
+          <div class="flex items-center justify-between">
+            <span class="font-semibold">$${it.price.toFixed(2)}</span>
+            <button onclick='addToCart(${JSON.stringify(it)})' class="bg-yellow-500 text-white px-3 py-1 rounded-md">Add to Cart</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function renderCartCount() {
+      const cart = JSON.parse(localStorage.getItem('niyantran_cart') || '[]');
+      const count = cart.reduce((sum, it) => sum + (it.qty || 1), 0);
+      let badge = document.getElementById('cart-count-badge');
+      if (!badge) {
+        const cartLink = document.querySelector('a[href="chart.html"]');
+        if (cartLink) {
+          const span = document.createElement('span'); span.id = 'cart-count-badge'; span.className = 'ml-1 inline-block bg-yellow-500 text-white text-xs rounded-full px-2'; span.textContent = count; cartLink.parentElement.insertBefore(span, cartLink.nextSibling);
+        }
+      } else badge.textContent = count;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => { renderMenu(); renderCartCount(); });
+  </script>
+</body>
+</html>
