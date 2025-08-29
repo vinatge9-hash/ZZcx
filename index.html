@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Font: Inter (Google Font) -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Niyantran Coffee - Home</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Ensure the main content width is fluid and fills the viewport */
+    :root { --bg: #f7fafc; --text: #1f2937; }
+  </style>
+</head>
+<body class="bg-white text-slate-900 min-h-screen">
+  <!-- Header / Navbar -->
+  <header class="w-full bg-white border-b border-gray-200">
+    <nav class="flex items-center justify-between p-4 md:p-6 max-w-full">
+      <a href="index.html" class="text-2xl font-bold tracking-tight">Niyantran</a>
+      <ul class="flex items-center space-x-4 text-sm">
+        <li><a href="index.html" class="hover:underline">Home</a></li>
+        <li><a href="menu.html" class="hover:underline">Menu</a></li>
+        <li><a href="chart.html" class="hover:underline">Cart</a></li>
+        <li><a href="checkout.html" class="hover:underline">Checkout</a></li>
+        <li><a href="about.html" class="hover:underline">About</a></li>
+        <li><a href="contact.html" class="hover:underline">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="w-full">
+    <div class="relative w-full h-96 md:h-[66vh] overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-tr from-amber-100 via-yellow-50 to-amber-100"></div>
+      <div class="relative z-10 flex items-center h-full px-6 md:px-12">
+        <div class="max-w-full w-full text-left">
+          <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-slate-900">Niyantran Coffee</h1>
+          <p class="text-lg md:text-xl text-slate-700 mb-6" >Crafted coffee, roasted with care, delivered with a smile.</p>
+          <a href="menu.html" class="inline-block bg-yellow-500 text-white px-6 py-3 rounded-md hover:bg-yellow-600">View Menu</a>
+        </div>
+      </div>
+      <div class="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-white to-transparent"></div>
+      <div class="absolute bottom-0 right-0 m-6 hidden md:block w-72 h-52 overflow-hidden rounded-xl shadow-lg bg-gray-100">
+        <div class="h-full w-full overflow-hidden">
+          <img src="https://images.pexels.com/photos/6801175/pexels-photo-6801175.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Latte" class="w-full h-full object-cover" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="w-full py-12 px-4 md:px-12">
+    <div class="max-w-full grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+      <div class="p-6 rounded-lg bg-white shadow-md">
+        <div class="text-4xl mb-2">☕</div>
+        <h3 class="font-semibold text-lg">Small Batch Roasted</h3>
+        <p class="text-sm text-slate-600">Carefully roasted to bring out depth and aroma.</p>
+      </div>
+      <div class="p-6 rounded-lg bg-white shadow-md">
+        <div class="text-4xl mb-2">🧭</div>
+        <h3 class="font-semibold text-lg">Ethically Sourced</h3>
+        <p class="text-sm text-slate-600">Direct trade with farmers and sustainable practices.</p>
+      </div>
+      <div class="p-6 rounded-lg bg-white shadow-md">
+        <div class="text-4xl mb-2">⚡</div>
+        <h3 class="font-semibold text-lg">Fast Delivery</h3>
+        <p class="text-sm text-slate-600">Freshly brewed coffee delivered to your door.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="w-full bg-slate-50 py-12 px-4 md:px-12">
+    <div class="max-w-full grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="p-6 bg-white rounded-lg shadow-md">
+        <p class="text-sm text-slate-700">"Best coffee in town. The latte is silky and the vibe is perfect for work or chat."</p>
+        <p class="mt-3 font-semibold">- A. Patel</p>
+      </div>
+      <div class="p-6 bg-white rounded-lg shadow-md">
+        <p class="text-sm text-slate-700">"The ordering process was smooth, and the cart was easy to manage. Highly recommend!"</p>
+        <p class="mt-3 font-semibold">- S. Nguyen</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="w-full bg-gray-800 text-white py-6 mt-6">
+    <div class="text-center text-sm">© 2025 Niyantran Coffee. All rights reserved.</div>
+  </footer>
+
+  <script>
+    // Simple cart count indicator (loads from localStorage)
+    function getCart() {
+      const raw = localStorage.getItem('niyantran_cart');
+      return raw ? JSON.parse(raw) : [];
+    }
+    function saveCart(cart) {
+      localStorage.setItem('niyantran_cart', JSON.stringify(cart));
+      renderCartCount();
+    }
+    function renderCartCount() {
+      const cart = getCart();
+      const count = cart.reduce((sum, it) => sum + (it.qty || 1), 0);
+      let badge = document.getElementById('cart-count-badge');
+      if (!badge) {
+        // create badge in header if not present (for simplicity, attach near Cart link)
+        const cartLink = document.querySelector('a[href="chart.html"]');
+        if (cartLink) {
+          const span = document.createElement('span');
+          span.id = 'cart-count-badge';
+          span.className = 'ml-1 inline-block bg-yellow-500 text-white text-xs rounded-full px-2';
+          span.textContent = count;
+          cartLink.parentElement.insertBefore(span, cartLink.nextSibling);
+        }
+      } else {
+        badge.textContent = count;
+      }
+    }
+    document.addEventListener('DOMContentLoaded', renderCartCount);
+  </script>
+</body>
+</html>
