@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Font: Inter (Google Font) -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Niyantran Coffee - Cart</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white text-slate-900 min-h-screen">
+  <header class="w-full bg-white border-b border-gray-200">
+    <nav class="flex items-center justify-between p-4 md:p-6 max-w-full">
+      <a href="index.html" class="text-2xl font-bold">Niyantran</a>
+      <ul class="flex items-center space-x-4 text-sm">
+        <li><a href="index.html" class="hover:underline">Home</a></li>
+        <li><a href="menu.html" class="hover:underline">Menu</a></li>
+        <li><a href="chart.html" class="hover:underline">Cart</a></li>
+        <li><a href="checkout.html" class="hover:underline">Checkout</a></li>
+        <li><a href="about.html" class="hover:underline">About</a></li>
+        <li><a href="contact.html" class="hover:underline">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="px-4 md:px-12 py-8">
+    <section>
+      <h1 class="text-3xl font-bold mb-4">Your Cart</h1>
+      <p class="text-slate-700 mb-6">Review items, adjust quantities, and proceed to checkout.</p>
+    </section>
+
+    <section id="cart-section" class="grid grid-cols-1 gap-4"></section>
+  </main>
+
+  <footer class="w-full bg-gray-800 text-white py-6 mt-6">
+    <div class="text-center text-sm">© 2025 Niyantran Coffee. All rights reserved.</div>
+  </footer>
+
+  <script>
+    function renderCart() {
+      const cart = JSON.parse(localStorage.getItem('niyantran_cart') || '[]');
+      const section = document.getElementById('cart-section');
+      section.innerHTML = '';
+      if (cart.length === 0) {
+        section.innerHTML = '<div class="p-4 bg-white rounded-md shadow-md">Your cart is empty. Add items from the Menu.</div>';
+        return;
+      }
+      const list = document.createElement('div');
+      list.className = 'space-y-4';
+      cart.forEach(item => {
+        const row = document.createElement('div'); row.className = 'flex items-center justify-between p-4 bg-white rounded-md shadow-md';
+        row.innerHTML = `
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 overflow-hidden rounded-md bg-gray-100" aria-label="item image">
+              <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover" />
+            </div>
+            <div>
+              <div class="font-semibold">${item.name}</div>
+              <div class="text-sm text-slate-600">$${item.price.toFixed(2)} each</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="updateQty('${item.id}', -1)" class="px-2 py-1 bg-gray-200 rounded">-</button>
+            <span class="w-6 text-center">${item.qty}</span>
+            <button onclick="updateQty('${item.id}', 1)" class="px-2 py-1 bg-gray-200 rounded">+</button>
+          </div>
+        `;
+        list.appendChild(row);
+      });
+      section.appendChild(list);
+      // total
+      const total = cart.reduce((sum, i) => sum + i.qty * i.price, 0);
+      const totalDiv = document.createElement('div'); totalDiv.className = 'text-right font-semibold mt-2'; totalDiv.innerHTML = `Total: $${total.toFixed(2)}`;
+      section.appendChild(totalDiv);
+      // checkout button
+      const btn = document.createElement('a'); btn.href = 'checkout.html'; btn.textContent = 'Proceed to Checkout'; btn.className = 'inline-block mt-2 bg-yellow-500 text-white px-4 py-2 rounded-md';
+      section.appendChild(btn);
+    }
+    function updateQty(id, delta) {
+      const cart = JSON.parse(localStorage.getItem('niyantran_cart') || '[]');
+      const item = cart.find(i => i.id === id);
+      if (!item) return;
+      item.qty += delta;
+      if (item.qty <= 0) {
+        const idx = cart.findIndex(i => i.id === id);
+        cart.splice(idx, 1);
+      }
+      localStorage.setItem('niyantran_cart', JSON.stringify(cart));
+      renderCart();
+      // update header badge
+      const event = new Event('storage'); document.dispatchEvent(event);
+      const grid = document.getElementById('cart-section');
+      if (grid) grid.scrollTop = 0;
+    }
+    document.addEventListener('DOMContentLoaded', renderCart);
+  </script>
+</body>
+</html>
